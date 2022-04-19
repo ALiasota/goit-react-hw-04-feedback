@@ -1,43 +1,54 @@
-import React, {Component} from "react";
+import React, { useState } from 'react';
 import Statistics from "./Statistics";
 import FeedbackOptions from "./FeedbackOptions";
 import Section from "./Section";
 import Notification from "./Notification";
 
-class App extends Component {
-       
-  state = {
-      good: 0,
-      neutral: 0,
-      bad: 0
-    }
-  
-  setEstimate = (estimate) => {
-      this.setState(prevState => ({[estimate]: prevState[estimate]+1,}));        
-  } 
+const App = () => { 
 
-  render() {
-    const countFeedback = () => { return Object.values(this.state).reduce(
-        (total, estimate) => total+estimate, 0
-      )};
-      
-      return(
+    const [good, setGood] = useState(0);
+    const [neutral, setNeutral] = useState(0);
+    const [bad, setBad] = useState(0);
+
+  const setEstimate = (estimate) => {
+    switch (estimate) {
+      case "good":
+        setGood(good + 1);
+        break;
+      case "neutral":
+        setNeutral(neutral + 1);
+        break;
+      case "bad":
+        setBad(bad + 1);
+        break;
+      default:
+        alert("Something is wrong");
+    }
+  }   
+
+  const countFeedback = good + neutral +bad;
+
+  const feedbacks = {good, neutral, bad};
+
+  return(
           <>
             <Section text='Please leave feed back'>
               <FeedbackOptions 
-                    feedbacks = {this.state} 
-                    onLeaveFeedback={this.setEstimate}/>
+                    feedbacks = {feedbacks} 
+                    onLeaveFeedback={setEstimate}/>
             </Section>
-            { countFeedback()?
+            { countFeedback?
             <Section text='Statistics'>              
-              <Statistics feedbacks = {this.state}  />
+              <Statistics feedbacks = {feedbacks}  />
             </Section>:
             <Notification text='There is no feedback'/>
             } 
             </>
       )
       
-  }
+      
+      
+  
 }
 
 export default App;
